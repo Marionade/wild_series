@@ -38,4 +38,22 @@ class ProgramController extends AbstractController
             'program' => $program,
         ]);
     }
+
+    #[Route('/season/show/{id<^[0-9]+$>}', name: 'show_season')]
+    public function showSeason(int $programId, int $seasonId) : response {
+        while ($seasonId === $programId) {
+            $season = $seasonID->findOneBy(['id' => $id]);
+        }
+    
+        if (!$season) {
+            throw $this->createNotFoundException(
+                'No program with id : '.$id.' found.'
+            );
+        }
+        return $this->render('program/season/show.html.twig', [
+            'season' => $season,
+        ]);
+
+
+    }
 }
