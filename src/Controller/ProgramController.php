@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
+use App\Repository\EpisodeRepository;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -28,6 +29,7 @@ class ProgramController extends AbstractController
     public function show(int $id, ProgramRepository $programRepository): Response
     {
         $program = $programRepository->findOneBy(['id' => $id]);
+        //$program = $programRepository->find($id);
         // same as $program = $programRepository->find($id);
     
         if (!$program) {
@@ -41,10 +43,8 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/{programId}/season/{seasonId}', name: 'season_show')]
-    public function showSeason(int $programId, int $seasonId, SeasonRepository $seasonRepository) : response {
-        while ($seasonId === $programId) {
-            $season = $seasonID->findOneBy(['id' => $id]);
-        }
+    public function showSeason(int $programId, int $seasonId, SeasonRepository $seasonRepository): response {
+        $season = $seasonRepository->findOneBy(['id' => $seasonId]);     
 
         if (!$season) {
             throw $this->createNotFoundException(
@@ -53,8 +53,20 @@ class ProgramController extends AbstractController
         }
         return $this->render('program/season_show.html.twig', [
             'season' => $season,
-        ]);
+        ]);    }
 
+    #[Route('/{seasonId}/episode/{episodeId}', name: 'episode_show')]
+    public function showEpisode(int $seasonId, int $episodeId, EpisodeRepository $episodeRepository): response {
+        $episode = $episodeRepository->findOneBy(['id' => $episodeId]);
+      
 
+        if (!$episode) {
+            throw $this->createNotFoundException(
+                'No program with id : '.$id.' found.'
+            );
+        }
+        return $this->render('program/episode_show.html.twig', [
+            'episode' => $episode,
+        ]);    
     }
 }
