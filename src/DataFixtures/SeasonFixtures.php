@@ -8,10 +8,47 @@ use Doctrine\Persistence\ObjectManager;
 use App\Entity\Season;
 use App\entity\Episode;
 use App\entity\Program;
+use Faker\Factory;
 
 class SeasonFixtures extends Fixture implements DependentFixtureInterface
 {
-    private const SEASON = [
+
+public function load(ObjectManager $manager): void
+{
+        $faker = Factory::create('fr_FR');
+
+        /**
+        * L'objet $faker que tu récupère est l'outil qui va te permettre 
+        * de te générer toutes les données que tu souhaites
+        */
+        foreach(ProgramFixtures::getTitles() as $program){
+
+        for($i = 1; $i < 7; $i++) {
+            $season = new Season();
+            //Ce Faker va nous permettre d'alimenter l'instance de Season que l'on souhaite ajouter en base
+            $season->setNumber($i);
+            $season->setYear($faker->year());
+            $season->setDescription($faker->paragraphs(3, true));
+
+            $season->setProgram($this->getReference('program_' . $program));
+
+            $this->addReference('program_' . $program . 'season_' . $i, $season);
+
+            $manager->persist($season);
+        }
+    }
+
+        $manager->flush();
+    }
+    public function getDependencies() : array
+    {
+        return [
+          ProgramFixtures::class,
+        ];
+    }
+}
+
+/*    private const SEASON = [
         [
             'program' => 'Breaking Bad',
             'number'=>'1',
@@ -69,14 +106,5 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface
             $manager->persist($season);
 
             $this->addReference('program_' . $seasons[$i]['program'] . ' season_'. $seasons[$i]['number'], $season);
-        }
-
-        $manager->flush();
-    }
-    public function getDependencies() : array
-    {
-        return [
-          ProgramFixtures::class,
-        ];
-    }
-}
+              }
+*/

@@ -8,10 +8,39 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use App\Entity\Episode;
 use App\Entity\Season;
 
+use Faker\Factory;
+
 
 class EpisodeFixtures extends Fixture implements DependentFixtureInterface
 {
-    private const EPISODE =[
+    public function load(ObjectManager $manager): void
+    {
+        $faker = Factory::create('fr_FR');
+        foreach(ProgramFixtures::getTitles() as $program) {
+            for($seasonNumber = 1; $seasonNumber < 7; $seasonNumber++){
+                for($episodeNumber = 1; $episodeNumber < 11; $episodeNumber++){
+                    $episode = new Episode();
+                    $episode->setNumber($episodeNumber);
+                    $episode->setTitle($faker->realText($faker->numberBetween(10, 45)));
+                    $episode->setSynopsis($faker->realText());
+                    $episode->setSeason($this->getReference('program_' . $program . 'season_' . $seasonNumber));
+                    $manager->persist($episode);
+                }
+            }
+        }
+        $manager->flush();
+    }
+
+
+            public function getDependencies() : array
+            {
+                return [
+                SeasonFixtures::class,
+                ];
+            }
+}
+
+ /*   private const EPISODE =[
         [
             'season' => 'program_Breaking Bad season_1',
             'title'=>'Chute libre',
@@ -127,12 +156,5 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
         }
 
         $manager->flush();
-    }
-            public function getDependencies() : array
-            {
-                return [
-                SeasonFixtures::class,
-                ];
-            }
-}
-
+   }
+     */
