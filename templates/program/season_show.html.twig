@@ -11,4 +11,14 @@
             <p>{{ season.year }}</p>
         </div>
      <h3> Liste des épisodes :</h3>   
+     {% for episode in season.episodes %}
+        <li>
+        <a href="{{ path("program_episode_show", {programId: program.id, seasonId: season.id, episodeId: episode.id}) }}">Episode n°{{ episode.number }}</a>
+        </li>
+     {% endfor %}
+
+        <a href="{{ path('app_index') }}">
+        Retour à l'accueil
+    </a>
+
    {% endblock %}

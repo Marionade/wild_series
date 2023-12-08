@@ -89,6 +89,12 @@ class Season
 
         return $this;
     }
+
+    public function getEpisodes(): Collection
+    {
+        return $this->episodes;
+    }
+
     public function addEpisode(Episode $episode): static
     {
         if (!$this->episodes->contains($episode)) {
