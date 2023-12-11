@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 #[Route('/episode')]
 class EpisodeController extends AbstractController
@@ -33,7 +34,9 @@ class EpisodeController extends AbstractController
             $entityManager->persist($episode);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'L\'épisode a été créé');
+
+            return $this->redirectToRoute('app_episode_index');
         }
 
         return $this->render('episode/new.html.twig', [
@@ -59,6 +62,8 @@ class EpisodeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'L\'épisode a été mis à jour');
+
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -74,6 +79,7 @@ class EpisodeController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$episode->getId(), $request->request->get('_token'))) {
             $entityManager->remove($episode);
             $entityManager->flush();
+            $this->addFlash('danger', 'L\'épisode a été supprimé');
         }
 
         return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
