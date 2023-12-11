@@ -6,8 +6,8 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Season;
-use App\entity\Episode;
-use App\entity\Program;
+use App\Entity\Episode;
+use App\Entity\Program;
 use Faker\Factory;
 
 class SeasonFixtures extends Fixture implements DependentFixtureInterface
@@ -15,14 +15,14 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface
 
 public function load(ObjectManager $manager): void
 {
-        $faker = Factory::create('fr_FR');
+    $faker = Factory::create('fr_FR');
 
-        /**
-        * L'objet $faker que tu récupère est l'outil qui va te permettre 
-        * de te générer toutes les données que tu souhaites
-        */
-        foreach(ProgramFixtures::getTitles() as $program){
-
+    /**
+    * L'objet $faker que tu récupère est l'outil qui va te permettre 
+    * de te générer toutes les données que tu souhaites
+    */
+    foreach(ProgramFixtures::getTitles() as $program)
+    {
         for($i = 1; $i < 7; $i++) {
             $season = new Season();
             //Ce Faker va nous permettre d'alimenter l'instance de Season que l'on souhaite ajouter en base
@@ -37,9 +37,9 @@ public function load(ObjectManager $manager): void
             $manager->persist($season);
         }
     }
+    $manager->flush();
+}
 
-        $manager->flush();
-    }
     public function getDependencies() : array
     {
         return [

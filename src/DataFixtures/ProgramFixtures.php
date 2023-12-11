@@ -5,10 +5,11 @@ namespace App\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Program;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class ProgramFixtures extends Fixture
+class ProgramFixtures extends Fixture implements DependentFixtureInterface 
 {
-    private const PROGRAM =[
+    private const PROGRAM =  [
         [
             'title'=>'Breaking Bad',
             'synopsis'=>'Les médecins ne lui donnent pas plus de deux ans à vivre. Pour réunir rapidement beaucoup d argent afin de mettre sa famille à l abri, Walter ne voit plus qu une solution, mettre ses connaissances en chimie à profit pour fabriquer et vendre du crystal meth...',
