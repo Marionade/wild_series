@@ -6,7 +6,7 @@
     <h1>Program</h1>
 
     <table class="table">
-        <tbody>
+        <body>
             <tr>
                 <th>Id</th>
                 <td>{{ program.id }}</td>
@@ -31,8 +31,29 @@
                 <th>Year</th>
                 <td>{{ program.year }}</td>
             </tr>
-        </tbody>
+
+            
+          
+        </body>
     </table>
+
+<strong>Acteurs :</strong>
+                <ul>
+                    {% for actor in program.actors %}
+                         <li><a href= "{{path('app_actor_show', {'id' : actor.id}) }}"> {{actor.name}} </a><li>  
+   
+                    {% else %}
+                        <li>Aucun acteur pour cette série</li>
+                    {% endfor %}
+                </ul>
+                
+    {% for season in program.seasons %}
+        <div>
+            <a href="{{ path('season_show', {'programId': program.id, 'seasonId': season.id}) }}">
+                <span>saison n°{{ season.number }} </span>
+            </a>
+        </div>
+    {% endfor %}
 
     <a href="{{ path('app_program_index') }}">back to list</a>
 

@@ -29,6 +29,7 @@
                 <td>{{ program.country }}</td>
                 <td>{{ program.year }}</td>
                 <td>
+
                     <a href="{{ path('app_program_show', {'id': program.id}) }}">show</a>
                     <a href="{{ path('app_program_edit', {'id': program.id}) }}">edit</a>
                 </td>
@@ -38,6 +39,7 @@
                 <td colspan="7">no records found</td>
             </tr>
         {% endfor %}
+
         </tbody>
     </table>
 

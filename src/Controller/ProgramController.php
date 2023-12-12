@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Program;
 use App\Entity\Season;
 use App\Entity\Episode;
+use App\Entity\Actor;
 use App\Form\ProgramType;
 use App\Repository\ProgramRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Repository\SeasonRepository;
+use App\Repository\EpisodeRepository;
+use App\Repository\ActorRepository;
+
 
 #[Route('/program')]
 class ProgramController extends AbstractController
@@ -88,4 +93,29 @@ class ProgramController extends AbstractController
 
         return $this->redirectToRoute('app_program_index', [], Response::HTTP_SEE_OTHER);
     }
+
+#[Route('/{programId}/season/{seasonId}', name: 'season_show')]
+public function showSeason(
+    #[MapEntity(mapping: ['programId' => 'id'])] Program $program,
+    #[MapEntity(mapping: ['seasonId'=> 'id'])] Season $season,): response 
+    {            
+        return $this->render('program/season_show.html.twig', [
+        'program'=>$program,
+        'season' => $season,
+    ]);    
 }
+
+#[Route('/{programId}/season/{seasonId}/episode/{episodeId}', name: 'episode_show')]
+    public function showEpisode(
+        #[MapEntity(mapping: ['programId' => 'id'])] Program $program,
+        #[MapEntity(mapping: ['seasonId'=> 'id'])] Season $season,
+        #[MapEntity(mapping: ['episodeId' => 'id'])]Episode $episode,): response 
+        {            
+            return $this->render('program/episode_show.html.twig', [
+            'program'=> $program,
+            'season' => $season,
+            'episode'=> $episode,
+        ]);    
+    }
+}
+

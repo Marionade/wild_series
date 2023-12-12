@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\Category;
 use App\Entity\Program;
+use App\Entity\Actor;
 
 class ProgramType extends AbstractType
 {

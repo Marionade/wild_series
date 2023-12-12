@@ -15,7 +15,12 @@
                 <th>Name</th>
                 <td>{{ actor.name }}</td>
             </tr>
-        </tbody>
+            <th> Séries associées </th>
+            <td> <ul>
+            {% for program in actor.programs %}
+            <li><a href= "{{path('app_program_show', {'id' : program.id}) }}"> {{program.title}} </a><li>  
+            {% endfor %} 
+            </tbody>
     </table>
 
     <a href="{{ path('app_actor_index') }}">back to list</a>

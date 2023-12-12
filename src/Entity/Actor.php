@@ -51,14 +51,6 @@ class Actor
         return $this->programs;
     }
 
-    public function setProgram(?Program $program): static
-    {
-        $this->program = $program;
-
-        return $this;
-    }
-
-
     public function addProgram(Program $program): static
     {
         if (!$this->programs->contains($program)) {
