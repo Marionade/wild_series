@@ -21,7 +21,9 @@ class ActorFixtures extends Fixture implements DependentFixtureInterface
                 $programsRandKeys = array_rand($programs, 3);
                 $actor = new Actor();
                 $actor->setName($faker->name());
-
+                foreach ($programsRandKeys as $title){
+                    $actor->addProgram($this->getReference('program_' . $programs[$title]));
+                }
                 $manager->persist($actor);
             }
         $manager->flush();
