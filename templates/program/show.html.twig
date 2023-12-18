@@ -31,8 +31,10 @@
                 <th>Year</th>
                 <td>{{ program.year }}</td>
             </tr>
-
-            
+            <tr>
+                <th>Durée totale de la série : </th>
+                <td>{{ duration }}</td>
+            </tr>            
           
         </body>
     </table>
@@ -49,7 +51,7 @@
                 
     {% for season in program.seasons %}
         <div>
-            <a href="{{ path('season_show', {'programId': program.id, 'seasonId': season.id}) }}">
+            <a href="{{ path('season_show', {slug : program.slug, 'seasonId': season.id}) }}">
                 <span>saison n°{{ season.number }} </span>
             </a>
         </div>
@@ -57,7 +59,7 @@
 
     <a href="{{ path('app_program_index') }}">back to list</a>
 
-    <a href="{{ path('app_program_edit', {'id': program.id}) }}">edit</a>
+    <a href="{{ path('app_program_edit', {slug : program.slug}) }}">edit</a>
 
     {{ include('program/_delete_form.html.twig') }}
 {% endblock %}

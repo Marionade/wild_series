@@ -12,12 +12,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 #[Route('/episode')]
 class EpisodeController extends AbstractController
 {
     #[Route('/', name: 'app_episode_index', methods: ['GET'])]
     public function index(EpisodeRepository $episodeRepository): Response
     {
+
         return $this->render('episode/index.html.twig', [
             'episodes' => $episodeRepository->findAll(),
         ]);
@@ -45,21 +48,26 @@ class EpisodeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_episode_show', methods: ['GET'])]
-    public function show(Episode $episode): Response
+    #[Route('/{slug}', name: 'app_episode_show', methods: ['GET'])]
+    public function show(Episode $episode, string $slug, SluggerInterface $slugger): Response
     {
+        $slug = $slugger->slug($episode->getTitle());
+        $episode->setSlug($slug);
+
         return $this->render('episode/show.html.twig', [
             'episode' => $episode,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_episode_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Episode $episode, EntityManagerInterface $entityManager): Response
+    #[Route('/{slug}/edit', name: 'app_episode_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Episode $episode, EntityManagerInterface $entityManager, string $slug, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $slug = $slugger->slug($episode->getTitle());
+            $episode->setSlug($slug);
             $entityManager->flush();
 
             $this->addFlash('success', 'L\'épisode a été mis à jour');

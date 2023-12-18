@@ -11,7 +11,7 @@
             {% for program in programs %}
                 <h3> -> {{ program.title }}</h3>
                 <p>{{ program.synopsis }}</p>
-                <a href="{{ path("app_program_show", { id: program.id }) }}">Voir la fiche</a>
+                <a href="{{ path("app_program_show", { slug : program.slug }) }}">Voir la fiche</a>
             {% endfor %}
         </ul>
     {% else %}
