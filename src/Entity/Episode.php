@@ -9,7 +9,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 #[ORM\Entity(repositoryClass: EpisodeRepository::class)]
+
 class Episode
 {
     #[ORM\Id]
@@ -34,7 +36,6 @@ class Episode
     private ?int $duration = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $slug = null;
 
     public function getId(): ?int
     {
@@ -112,4 +113,5 @@ class Episode
 
         return $this;
     }
+
 }

@@ -23,6 +23,8 @@ class EpisodeType extends AbstractType
                     return $season->getProgram()->getTitle() . '/ Season' . $season->getNumber();
                 },
             ])
+        ;
+
 
         ;
     }

@@ -10,14 +10,22 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\ArgumentResolver\EntityValueResolver;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use DateTimeInterface;
+use DateTime;
 
 #[ORM\Entity(repositoryClass: ProgramRepository::class)]
+#[Vich\Uploadable] 
 #[UniqueEntity(
     fields: ['title'],
     message: 'ce titre existe déjà'
 )]
 class Program
 {
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DatetimeInterface $updatedAt = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -42,6 +50,13 @@ class Program
 
     #[ORM\Column(length: 155, nullable: true)]
     private ?string $poster = null;
+
+    #[Vich\UploadableField(mapping: 'poster_file', fileNameProperty: 'poster')]
+    #[Assert\File(
+        maxSize: '1M',
+        mimeTypes : ['image/jpeg', 'image/png', 'image/webp'],
+        )]
+        private ?File $posterFile = null;
 
     #[ORM\ManyToOne(inversedBy: 'programs')]
     private ?Category $category = null;
@@ -106,6 +121,21 @@ class Program
         $this->poster = $poster;
 
         return $this;
+    }
+
+    public function setPosterFile(File $image = null): Program
+    {
+      $this->posterFile = $image;
+      if ($image) {
+        $this->updatedAt = new DateTime('now');
+      }
+  
+      return $this;
+    }
+
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
     }
 
     public function getCategory(): ?Category
@@ -209,6 +239,18 @@ class Program
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

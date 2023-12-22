@@ -19,6 +19,9 @@ use App\Repository\EpisodeRepository;
 use App\Repository\ActorRepository;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use App\Service\ProgramDuration;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
 
 
 #[Route('/program')]
@@ -26,8 +29,9 @@ class ProgramController extends AbstractController
 {
     private SluggerInterface $slugger;
 
-    public function __construct(SluggerInterface $slugger){
+    public function __construct(SluggerInterface $slugger, ProgramRepository $programRepository){
         $this->slugger = $slugger;
+        $this->programRepository = $programRepository;
     }
 
     #[Route('/', name: 'app_program_index')]
@@ -41,7 +45,7 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/new', name: 'app_program_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ProgramRepository $programRepository, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, MailerInterface $mailer, ProgramRepository $programRepository, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $program = new Program();
         $form = $this->createForm(ProgramType::class, $program);
@@ -55,6 +59,16 @@ class ProgramController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'The new program has been created');
+
+            $email = (new Email())
+            ->from('your_email@example.com')
+            ->to('your_email@example.com')
+            ->subject('Une nouvelle série vient d être publiée')
+            ->html('<p>Une nouvelle série vient d être publiée sur Wild Séries !</p>');
+
+        $mailer->send($email);
+
+        $this->getParameter('mailer_from');
 
             return $this->redirectToRoute('app_program_index');
         }
@@ -81,7 +95,7 @@ class ProgramController extends AbstractController
     #[Route('/{slug}/edit', name: 'app_program_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Program $program, EntityManagerInterface $entityManager, string $slug, SluggerInterface $slugger): Response
     {
-        $program = $programRepository->findOneBy(['slug' => $slug]);
+        $program = $this->programRepository->findOneBy(['slug' => $slug]);
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
 
