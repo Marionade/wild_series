@@ -9,5 +9,28 @@
            <p>Synopsis : {{ episode.synopsis }}</p>
         </li>
 
+{% if app.user %}
+    <h3>Ajouter un commentaire </h3>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button typr = "submit" class="btn btn-primary">Envoyer</button>
+    {{form_end(form)}}
+{% endif %}
 
-   {% endblock %}
+<h3>Commentaires : </h3>
+
+{% for comment in comments %}
+<div class = "card mb-2">
+    <div class = "card-body">
+        <p class = "card-text">
+            <strong>{{comment.user.email}}</strong>:({{ comment.createdAt|date('d/m/Y') }}):
+                        {{ comment.comment }}
+                    </p>
+    </div>
+</div>
+{% else %}
+    <p> Aucuns commentaires </p>
+{% endfor %}
+
+
+{% endblock %}

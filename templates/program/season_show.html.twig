@@ -13,7 +13,7 @@
      <h3> Liste des épisodes :</h3>   
      {% for episode in season.episodes %}
         <li>
-        <a href="{{ path("episode_show", { slug : program.slug , seasonId: season.id, episodeId: episode.id}) }}">Episode n°{{ episode.number }}</a>
+        <a href="{{ path("episode_show", { slug : program.slug , 'season': season.id, 'episode': episode.id}) }}">Episode n°{{ episode.number }}</a>
         </li>
      {% endfor %}
 

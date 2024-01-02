@@ -6,6 +6,7 @@ use App\Entity\Program;
 use App\Entity\Season;
 use App\Entity\Episode;
 use App\Entity\Actor;
+use App\Entity\User;
 use App\Form\ProgramType;
 use App\Repository\ProgramRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,10 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use App\Service\ProgramDuration;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use App\Entity\Comment;
+use App\Form\CommentType;
+use App\Repository\CommentRepository;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 
 
@@ -127,29 +132,50 @@ class ProgramController extends AbstractController
         return $this->redirectToRoute('app_program_index', [], Response::HTTP_SEE_OTHER);
     }
 
-#[Route('/{slug}/season/{seasonId}', name: 'season_show')]
-public function showSeason(string $slug, SluggerInterface $slugger, Program $program,
-    #[MapEntity(mapping: ['seasonId'=> 'id'])] Season $season,): response 
-    {            
-        $slug = $slugger->slug($program->getTitle());
-        $program->setSlug($slug);
 
-        return $this->render('program/season_show.html.twig', [
-        'program'=>$program,
+#[Route('/{slug}/season/{season}', name: 'season_show')]
+public function showSeason(string $slug, Program $program, SluggerInterface $slugger, Season $season): Response
+{   
+    $slug = $slugger->slug($program->getTitle());
+    $program->setSlug($slug);
+    return $this->render('program/season_show.html.twig', [
+        'program' => $program,
         'season' => $season,
-    ]);    
+    ]);
 }
 
 #[Route('/{slug}/season/{season}/episode/{episode}', name: 'episode_show')]
-public function showEpisode(Program $program, Season $season, Episode $episode, SluggerInterface $slugger): Response
+public function showEpisode(Program $program, Season $season, Episode $episode, SluggerInterface $slugger, Request $request, UserInterface $user, EntityManagerInterface $entityManager): Response
 {
     $slug = $slugger->slug($program->getTitle());
     $program->setSlug($slug);
     $episode->setSlug($slug);
+
+    $comment = new Comment();
+    $comment->setCreatedAt(new \DateTimeImmutable());
+    $form = $this->createForm(CommentType::class, $comment);
+    $form->handleRequest($request);
+
+    if($form->isSubmitted() && $form->isValid()){
+        $comment->setEpisode($episode);
+        $comment->setUser($user);
+        $entityManager->persist($comment);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('episode_show',[
+            'slug' => $program->getSlug(),
+            'season' => $season->getId(),
+            'episode' => $episode->getId()
+        ]);
+    }
+            $comments = $entityManager->getRepository(Comment::class)->findBy(['episode' => $episode]);
+
     return $this->render('program/episode_show.html.twig', [
         'program' => $program,
         'season' => $season,
         'episode' => $episode,
+        'form' => $form,
+        'comments' => $comments,
         ]);    
     }
 
