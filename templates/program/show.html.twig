@@ -35,8 +35,10 @@
             <tr>
                 <th>Durée totale de la série : </th>
                 <td>{{ duration }}</td>
-            </tr>            
-          
+            </tr> 
+            <tr>           
+                    {{ component('Watchlist', {program:program}) }}
+            </tr>
         </body>
     </table>
 

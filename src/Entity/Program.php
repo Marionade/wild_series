@@ -80,10 +80,14 @@ class Program
     #[ORM\JoinColumn(nullable: true)]
     private ?User $owner = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'watchlist')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
         $this->actors = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -267,6 +271,33 @@ class Program
     public function setOwner(?User $owner): static
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addWatchlist($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeWatchlist($this);
+        }
 
         return $this;
     }
