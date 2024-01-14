@@ -50,6 +50,17 @@ class ProgramController extends AbstractController
         ]);
     }
 
+    #[Route('/favoris', name: 'app_favoris')]
+    public function watchlist(ProgramRepository $programRepository): Response
+    {
+        $user = $this->getUser();
+        $programs = $user->getWatchlist();
+    
+        return $this->render('program/watchlist.html.twig', [
+            'programs' => $programs,
+        ]);  
+    }
+
     #[Route('/new', name: 'app_program_new', methods: ['GET', 'POST'])]
     public function new(Request $request, MailerInterface $mailer, ProgramRepository $programRepository, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {

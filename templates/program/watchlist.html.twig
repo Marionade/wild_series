@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Mes favoris :</h1>
+
+{% for program in programs %}
+
+        <h2>{{ program.title }}</h2>
+        <p></p>
+
+        <a href="{{ path('app_program_show', {slug : program.slug}) }}">show</a>
+    </div>
+{% endfor %}
+
+{% endblock %}
