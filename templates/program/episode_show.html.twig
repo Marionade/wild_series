@@ -25,7 +25,12 @@
         <p class = "card-text">
             <strong>{{comment.user.email}}</strong>:({{ comment.createdAt|date('d/m/Y') }}):
                         {{ comment.comment }}
-                    </p>
+        {% if app.user and (app.user == comment.user or is_granted('ROLE_ADMIN')) %}
+            <form method="post" action="{{path('comment_delete', {'id': comment.id}) }}">
+            <button type="submit" class="btn btn-danger btn-sm">Supprimer ce commentaire</button>
+            </form>
+        {% endif %}
+        </p>
     </div>
 </div>
 {% else %}

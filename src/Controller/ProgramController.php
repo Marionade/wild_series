@@ -26,7 +26,8 @@ use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Repository\CommentRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Bundle\SecurityBundle\Security;
 
 
 #[Route('/program')]
@@ -53,9 +54,9 @@ class ProgramController extends AbstractController
     public function new(Request $request, MailerInterface $mailer, ProgramRepository $programRepository, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $program = new Program();
+        $program->setOwner($this->getUser());
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
-
 
         if ($form->isSubmitted() && $form->isValid()) {
             $slug = $slugger->slug($program->getTitle());
@@ -85,7 +86,7 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'app_program_show', methods: ['GET'])]
-    public function show(Program $program, string $slug, SluggerInterface $slugger, ProgramDuration $programDuration): Response
+    public function show(Program $program, string $slug, SluggerInterface $slugger, ProgramDuration $programDuration, ProgramRepository $programRepository): Response
     {
         $slug = $slugger->slug($program->getTitle());
         $program->setSlug($slug); 
@@ -103,6 +104,10 @@ class ProgramController extends AbstractController
         $program = $this->programRepository->findOneBy(['slug' => $slug]);
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
+
+        if ($this->getUser() !== $program->getOwner()){
+            $this->addFlash('danger', 'interdit');
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $slug = $slugger->slug($program->getTitle());
@@ -179,5 +184,25 @@ public function showEpisode(Program $program, Season $season, Episode $episode, 
         ]);    
     }
 
-}
+    #[Route('/comment/{id}/delete', name: 'comment_delete', methods: ['POST'])]
+    public function deleteComment(Request $request, Comment $comment, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
+            if ($this->isGranted('ROLE_ADMIN') || $comment->getUser() === $this->getUser()) {
+                $entityManager->remove($comment);
+                $entityManager->flush();
+                $this->addFlash('success', 'Commentaire supprimé avec succès.');
+            } else {
+                $this->addFlash('danger', 'Vous n\'avez pas le droit de supprimer ce commentaire.');
+            }
+        }
 
+    
+        return $this->redirectToRoute('episode_show', [
+            'slug' => $comment->getEpisode()->getSeason()->getProgram()->getSlug(),
+            'season' => $comment->getEpisode()->getSeason()->getId(),
+            'episode' => $comment->getEpisode()->getId(),
+            'comment' => $comment->getId()
+        ]);
+    }
+} 

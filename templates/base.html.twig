@@ -12,24 +12,27 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
- <header>
-        {% block navbar %}
-			{% include '_navbar.html.twig' %}
-		{% endblock %}
- </header>
 
 
-    <body>
-{% for messages in app.flashes %}
-    {% for message in messages %}
-        <div>
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endfor %}
+     <body   {{ stimulus_controller('theme')}} {{ stimulus_target('theme', 'body') }}>
+        <header >
+        
+                {% block navbar %}
+                    {% include '_navbar.html.twig' %}
+                {% endblock %}
+        </header>
+   
+
+        {% for messages in app.flashes %}
+            {% for message in messages %}
+                <div>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
 
         {% block body %}
-       
         {% endblock %}
     </body>
+    <footer></footer>
 </html>

@@ -56,6 +56,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        $user = $this->getReference('contributor_user');
+
         foreach (self::PROGRAM as $programData){
             $program = new Program();
             $program->setTitle($programData['title']);
@@ -63,6 +65,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
             $program->setCountry($programData['country']);
             $program->setYear($programData['year']);
             $program->setCategory($this->getReference($programData['category']));
+            $program->setOwner($user);
+
 
             $slug = $this->slugger->slug($programData['title']);
             $program->setSlug($slug);
@@ -86,6 +90,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         // Tu retournes ici toutes les classes de fixtures dont ProgramFixtures dépend
         return [
           CategoryFixtures::class,
+          UserFixtures::class,
         ];
     }
 

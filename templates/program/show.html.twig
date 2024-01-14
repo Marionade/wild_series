@@ -58,7 +58,9 @@
         </div>
     {% endfor %}
 
+    {% if is_granted("ROLE_ADMIN") %}
     <a href="{{ path('app_program_index') }}">back to list</a>
+    {%endif%}
 
     <a href="{{ path('app_program_edit', {slug : program.slug}) }}">edit</a>
 
