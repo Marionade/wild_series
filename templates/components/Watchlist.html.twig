@@ -2,9 +2,9 @@
 <div{{ attributes }}>
     <button data-action="live#action" data-action-name="toggle">
         {% if app.user.watchlist.contains(this.program) %}
-        Enlever des favoris
+            <i class="bi bi-heart-fill"></i>
         {% else %}
-        Ajouter aux favoris
+            <i class="bi bi-heart"></i>
         {% endif %}
     </button>
 </div>
