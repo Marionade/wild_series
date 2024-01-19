@@ -1,3 +1,5 @@
+
+
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
@@ -39,6 +41,8 @@ security:
     access_control:
         - { path: ^/program/new, roles: ROLE_CONTRIBUTOR }
         - { path: ^/program/[a-zA-Z_0-9-]+/edit, roles: ROLE_CONTRIBUTOR }
+        - { path: ^/category/new, roles: ROLE_CONTRIBUTOR }
+        - { path: ^/category/[ a-zA-Z_0-9- ]+/edit, roles: ROLE_CONTRIBUTOR }
     role_hierarchy:
         ROLE_CONTRIBUTOR: ROLE_USER
         ROLE_ADMIN: ROLE_CONTRIBUTOR

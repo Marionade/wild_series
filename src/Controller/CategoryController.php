@@ -28,6 +28,7 @@ class CategoryController extends AbstractController
         );
     }
 
+
     #[Route('/show/{categoryName}', name: 'show')]
     public function show(string $categoryName, CategoryRepository $categoryRepository, ProgramRepository $programRepository):Response
     {
